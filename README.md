@@ -115,9 +115,12 @@ Thanks to Bitmask optimizations and diagonal box seeding, puzzle generation and 
 ## 🔬 The Algorithmic Engine
 
 ### 1. Bitmask Solver & MRV Heuristic (`solver.js`)
-Numbers 1–9 are represented as bit flags (`1 << num`). Available candidates for cell $(r, c)$ are calculated in a single bitwise operation:
+Numbers 1–9 are represented as bit flags (`1 << num`). Available candidates for any cell `(row, col)` are calculated in a single bitwise operation:
 
-$$\text{Available} = \sim(\text{rowMask}[r] \mid \text{colMask}[c] \mid \text{boxMask}[b]) \ \& \ \text{0x3FE}$$
+```javascript
+// Instant candidate calculation in a single CPU instruction:
+const available = ~(rowMask[row] | colMask[col] | boxMask[box]) & 0x03FE;
+```
 
 The solver applies the **Minimum Remaining Values (MRV)** heuristic, prioritizing empty cells with the fewest candidate choices to prune search branches early.
 
@@ -128,22 +131,24 @@ The solver applies the **Minimum Remaining Values (MRV)** heuristic, prioritizin
 ### 3. Multi-Factor Difficulty Rater (`difficulty.js`)
 Difficulty is calculated through a realistic hybrid model combining human techniques and algorithmic search:
 
-$$\text{Difficulty Score} = S_{\text{clues}} + 0.5 \cdot N_{\text{naked}} + 3.0 \cdot N_{\text{hidden}} + 7.0 \cdot R_{\text{cells}} + \text{Search Penalty}$$
+```text
+Difficulty Score = Clue Weight + (0.5 × Naked Singles) + (3.0 × Hidden Singles) + (7.0 × Remaining Cells) + Search Penalty
+```
 
 Where:
-- **Naked Singles ($N_{\text{naked}}$)**: Cells with only one valid candidate.
-- **Hidden Singles ($N_{\text{hidden}}$)**: Numbers that appear only once in a row, column, or 3×3 box.
-- **Remaining Cells ($R_{\text{cells}}$)**: Unresolved cells after pure logic is exhausted.
+- **Naked Singles (`N_naked`)**: Cells with only one valid candidate.
+- **Hidden Singles (`N_hidden`)**: Numbers that appear only once in a row, column, or 3×3 box.
+- **Remaining Cells (`R_cells`)**: Unresolved cells after pure logic is exhausted.
 - **Search Penalty**: Measures backtracking nodes and recursion depth required when logic alone cannot complete the puzzle.
 
 ### Difficulty Classification Matrix
 
 | Difficulty | Clue Range | Target Score | Characteristics |
 | :--- | :---: | :---: | :--- |
-| **Easy** | 38 – 44 | $0 - 49$ | Solvable almost entirely using Naked Singles. |
-| **Medium** | 30 – 36 | $40 - 84$ | Requires Hidden Singles across rows, columns, and boxes. |
-| **Hard** | 26 – 29 | $75 - 130$ | Requires multi-step logical deductions with minimal guessing. |
-| **Expert** | 22 – 26 | $110+$ | Highly constrained; resists basic logic, requiring deep search. |
+| **Easy** | 38 – 44 | 0 – 49 | Solvable almost entirely using Naked Singles. |
+| **Medium** | 30 – 36 | 40 – 84 | Requires Hidden Singles across rows, columns, and boxes. |
+| **Hard** | 26 – 29 | 75 – 130 | Requires multi-step logical deductions with minimal guessing. |
+| **Expert** | 22 – 26 | 110+ | Highly constrained; resists basic logic, requiring deep search. |
 
 ---
 
