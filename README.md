@@ -58,6 +58,9 @@ Everything runs **100% client-side in the browser**—with sub-millisecond solvi
 - **Fixed 3×3 Note Matrix**: Pencil notes occupy deterministic positions (1 top-left, 9 bottom-right) so candidate annotations never shift or jump around inside the cell.
 - **Real-Time Validation**: Entered numbers are verified directly against the unique solution. Incorrect inputs trigger immediate mistake indicators and prevent board soft-locks.
 - **3-Mistake Challenge**: Keeps gameplay thrilling with a 3-strike threshold.
+- **Multi-Resolution & Full-UI Equalization (1200×2000 Ready)**: Comprehensive layout harmonization across **all UI sections**—not just the board. Uses CSS Container Queries (`cqi`) on the board alongside synchronized, fluid `clamp()` sizing across Header, Topbar, Sidebar controls (NumberPad and GameToolbar with matched row heights and typography), Notification Banners, How-to-Play, Footer, and Modals.
+- **Symmetrical 2-Column Sidebar Rhythm**: In stacked and tablet portrait modes, the NumberPad and GameToolbar columns are geometrically synchronized with identical button heights, padding, and font scales.
+- **Adaptive Orientation Layout**: Dynamically toggles between an ergonomic 2-column layout in landscape and an expansive, perfectly aligned stacked layout in portrait mode to make optimal use of vertical screen space.
 - **Arrow Key & WASD Navigation**: Seamlessly navigate the 9×9 grid using keyboard arrows or `WASD` without lifting your hands.
 
 ### 🔊 Native Web Audio Sound Effects
@@ -202,7 +205,7 @@ Speed up your gameplay on desktop with native keyboard shortcuts:
 | **Routing** | [React Router 7](https://reactrouter.com/) | Client-side declarative routing (`/`, `/new-game`, `/game`, `/statistics`) |
 | **Sound Synthesis** | [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) | Low-latency, client-side synthesized acoustic feedback |
 | **Code Quality** | [ESLint 10](https://eslint.org/) | Strict ECMAScript and React Hooks linting standards |
-| **Styling** | Modern Vanilla CSS | Zero-runtime CSS with fluid dark/light design tokens and responsive layouts |
+| **Styling & Layout** | Modern Vanilla CSS & Container Queries | Fluid CSS container queries (`cqi`), adaptive orientation queries, zero-runtime tokens, and responsive dark/light modes |
 | **State & Persistence** | Browser `localStorage` | Seamless auto-save, statistics recording, and settings persistence |
 
 ---

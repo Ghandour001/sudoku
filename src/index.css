@@ -274,10 +274,10 @@ p {
 
 .game-page {
   width: 100%;
-  max-width: 1180px;
+  max-width: min(1440px, 100%);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 0 20px 40px;
+  padding: 0 24px 40px;
 }
 
 /* =========================================================
@@ -519,14 +519,16 @@ p {
 
 .game-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 410px;
-  gap: 18px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(360px, 420px);
+  gap: 22px;
   align-items: start;
 }
 
 .board-section {
   width: 100%;
   min-width: 0;
+  max-width: min(940px, calc(100vh - 160px));
+  margin: 0 auto;
 
   padding: 10px;
 
@@ -545,6 +547,8 @@ p {
 
 .sudoku-board {
   position: relative;
+  container-type: inline-size;
+  container-name: sudokuBoard;
 
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -990,9 +994,11 @@ html[data-theme="light"] .sudoku-cell.selected {
 
   color: var(--text);
 
-  font-size: clamp(22px, 3vw, 34px);
+  font-size: clamp(20px, 4.5vw, 62px);
+  font-size: clamp(20px, 6.8cqi, 62px);
   font-weight: 850;
   line-height: 1;
+  user-select: none;
 }
 
 .sudoku-cell.given .cell-value {
@@ -1215,7 +1221,7 @@ html[data-theme="light"] .board-pause-overlay > div {
 
   color: var(--text);
 
-  font-size: 29px;
+  font-size: clamp(22px, 2.4vw, 34px);
   font-weight: 850;
 }
 
@@ -1232,19 +1238,24 @@ html[data-theme="light"] .board-pause-overlay > div {
 
 .erase-button {
   width: 100%;
-  min-height: 50px;
+  min-height: clamp(50px, 5vh, 60px);
 
   margin-top: 10px;
 
   border: 1px solid var(--border);
-  border-radius: 11px;
+  border-radius: 12px;
 
   background: var(--surface-2);
   color: var(--text);
 
   cursor: pointer;
 
-  font-weight: 700;
+  font-weight: 750;
+  font-size: clamp(14px, 1.25vw, 17px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .erase-button:hover:not(:disabled) {
@@ -1258,7 +1269,8 @@ html[data-theme="light"] .board-pause-overlay > div {
 }
 
 .erase-icon {
-  margin-right: 7px;
+  margin-right: 4px;
+  font-size: clamp(17px, 1.4vw, 22px);
 }
 
 /* =========================================================
@@ -1292,7 +1304,7 @@ html[data-theme="light"] .board-pause-overlay > div {
 .tool-button {
   position: relative;
 
-  min-height: 70px;
+  min-height: clamp(66px, 6.5vh, 80px);
 
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -1303,6 +1315,7 @@ html[data-theme="light"] .board-pause-overlay > div {
   cursor: pointer;
 
   font-weight: 750;
+  font-size: clamp(13px, 1.2vw, 16px);
 
   transition:
     border-color 0.12s ease,
@@ -3134,106 +3147,399 @@ a {
 
 
 /* =========================================================
-   TABLET PORTRAIT
-   <= 780px
+   TABLET PORTRAIT & MEDIUM SCREENS
+   <= 1024px OR portrait tablets up to 1366px (e.g. 1200x2000)
    ========================================================= */
 
-@media (max-width: 780px) {
+@media (max-width: 1024px), (max-width: 1366px) and (orientation: portrait), (max-aspect-ratio: 1/1) and (max-width: 1366px) {
 
   .game-page {
-    padding-left: 14px;
-    padding-right: 14px;
+    width: 100%;
+    max-width: min(1080px, 100%);
+    padding-left: clamp(14px, 2.5vw, 28px);
+    padding-right: clamp(14px, 2.5vw, 28px);
+    padding-bottom: clamp(30px, 4vh, 50px);
   }
 
-  /* Header becomes two rows */
+  /* ---------------------------------
+     SHARED ALIGNED COLUMN WIDTH
+     --------------------------------- */
+  .game-header,
+  .game-topbar,
+  .game-layout,
+  .board-section,
+  .game-sidebar,
+  .how-to-play,
+  .game-footer {
+    width: 100%;
+    max-width: min(920px, 100%);
+    margin-left: auto;
+    margin-right: auto;
+  }
 
+  /* ---------------------------------
+     HEADER EQUALIZATION
+     --------------------------------- */
   .game-header {
+    display: grid;
     grid-template-columns: auto 1fr auto;
+    align-items: center;
+    column-gap: clamp(12px, 1.8vw, 24px);
+    row-gap: clamp(10px, 1.2vh, 16px);
+    min-height: clamp(80px, 8vh, 100px);
+    padding: clamp(12px, 1.4vh, 18px) 0;
+  }
 
-    gap: 14px;
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 1.4vw, 16px);
+    min-width: 0;
+  }
+
+  .brand-logo {
+    width: clamp(48px, 4.6vw, 62px);
+    height: clamp(48px, 4.6vw, 62px);
+    min-width: clamp(48px, 4.6vw, 62px);
+    font-size: clamp(24px, 2.4vw, 32px);
+    border-radius: 14px;
+  }
+
+  .brand-name {
+    font-size: clamp(22px, 2.2vw, 30px);
+    line-height: 1.1;
+  }
+
+  .brand p {
+    font-size: clamp(12px, 1.1vw, 15px);
+    margin-top: 2px;
   }
 
   .game-nav {
     grid-column: 1 / -1;
     grid-row: 2;
-
     width: 100%;
-
     padding-top: 4px;
-
     justify-content: center;
+    gap: clamp(20px, 2.8vw, 40px);
   }
 
-  /* Topbar */
+  .game-nav a {
+    font-size: clamp(13px, 1.25vw, 16px);
+    font-weight: 700;
+  }
 
+  .header-actions {
+    gap: clamp(8px, 1vw, 14px);
+  }
+
+  .header-icon-button {
+    width: clamp(44px, 4.2vw, 52px);
+    height: clamp(44px, 4.2vw, 52px);
+    font-size: clamp(20px, 1.8vw, 25px);
+    border-radius: 13px;
+  }
+
+  /* ---------------------------------
+     TOPBAR EQUALIZATION
+     --------------------------------- */
   .game-topbar {
+    display: grid;
     grid-template-columns: 1fr 1fr;
-
-    gap: 12px;
+    align-items: center;
+    gap: clamp(10px, 1.4vw, 18px);
+    margin: clamp(14px, 1.8vh, 24px) auto clamp(12px, 1.5vh, 18px);
   }
 
   .difficulty-control {
-    width: max-content;
+    width: fit-content;
     max-width: 100%;
+    font-size: clamp(13px, 1.2vw, 16px);
+    padding: clamp(8px, 1vh, 12px) clamp(14px, 1.4vw, 20px);
+    border-radius: 12px;
+  }
+
+  .difficulty-control strong {
+    font-size: clamp(14px, 1.3vw, 17px);
   }
 
   .game-stats {
     justify-content: flex-end;
-
     min-width: 0;
+    font-size: clamp(13px, 1.2vw, 16px);
+    gap: clamp(12px, 1.4vw, 20px);
+  }
 
-    overflow: hidden;
+  .timer,
+  .mistakes,
+  .score-display {
+    gap: clamp(6px, 0.7vw, 10px);
+  }
+
+  .timer strong,
+  .mistakes strong,
+  .score-display strong {
+    font-size: clamp(16px, 1.5vw, 22px);
+    font-weight: 800;
+  }
+
+  .timer-icon {
+    font-size: clamp(18px, 1.6vw, 24px);
+  }
+
+  .stats-divider {
+    height: clamp(22px, 2.2vh, 30px);
   }
 
   .topbar-actions {
     grid-column: 1 / -1;
-
     width: 100%;
-
     display: grid;
     grid-template-columns: 1fr 1fr;
-
-    gap: 10px;
+    gap: clamp(10px, 1.2vw, 16px);
   }
 
   .pause-button,
   .new-game-button {
     width: 100%;
-    min-width: 0;
+    min-height: clamp(48px, 5vh, 58px);
+    font-size: clamp(14px, 1.3vw, 17px);
+    font-weight: 750;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 
-  /* Game becomes vertical */
-
+  /* ---------------------------------
+     MAIN GAME LAYOUT (BOARD & SIDEBAR)
+     --------------------------------- */
   .game-layout {
-    grid-template-columns: 1fr;
-
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 2vh, 24px);
+    align-items: center;
   }
 
   .board-section {
-    width: 100%;
+    max-width: min(920px, 100%, calc(100vh - 180px));
+    padding: clamp(8px, 1.2vw, 14px);
+    border-radius: 16px;
   }
 
-  .game-sidebar {
+  .sudoku-board {
     width: 100%;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+  }
 
+  .cell-value {
+    font-size: clamp(20px, 6.8cqi, 62px);
+  }
+
+  .note-number {
+    font-size: clamp(8px, 2.3cqi, 18px);
+  }
+
+  /* ---------------------------------
+     SIDEBAR CONTROLS EQUALIZATION
+     NumberPad and GameToolbar share matching row heights,
+     gaps, paddings, and fluid typography.
+     --------------------------------- */
+  .game-sidebar {
     display: grid;
-
     grid-template-columns: 1fr 1fr;
-
     gap: 0;
-
+    align-items: stretch;
     overflow: hidden;
+    border-radius: 16px;
+  }
+
+  .number-pad,
+  .game-toolbar {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: clamp(14px, 1.8vw, 22px);
   }
 
   .number-pad {
-    min-width: 0;
-
     border-right: 1px solid var(--border);
+  }
+
+  .number-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(8px, 1vh, 12px);
+  }
+
+  .number-button {
+    width: 100%;
+    min-height: clamp(66px, 6.5vh, 88px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  .number-value {
+    font-size: clamp(24px, 2.5vw, 36px);
+    font-weight: 850;
+    line-height: 1;
+  }
+
+  .number-remaining {
+    font-size: clamp(11px, 1.1vw, 14px);
+    font-weight: 750;
+    margin-top: clamp(4px, 0.6vh, 8px);
+  }
+
+  .erase-button {
+    width: 100%;
+    min-height: clamp(52px, 5vh, 66px);
+    margin-top: clamp(8px, 1vh, 12px);
+    border-radius: 12px;
+    font-size: clamp(14px, 1.3vw, 18px);
+    font-weight: 750;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .erase-icon {
+    font-size: clamp(18px, 1.6vw, 24px);
+  }
+
+  .input-mode-row,
+  .history-row,
+  .action-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(8px, 1vh, 12px);
+  }
+
+  .history-row,
+  .action-row {
+    margin-top: clamp(8px, 1vh, 12px);
+  }
+
+  .mode-button,
+  .tool-button {
+    width: 100%;
+    min-height: clamp(66px, 6.5vh, 88px);
+    border-radius: 12px;
+    font-size: clamp(13px, 1.2vw, 17px);
+    font-weight: 750;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .mode-icon {
+    font-size: clamp(18px, 1.6vw, 24px);
+  }
+
+  .notes-icon {
+    font-size: clamp(11px, 1.0vw, 14px);
+  }
+
+  .tool-button > span:first-child {
+    font-size: clamp(20px, 1.8vw, 26px);
+  }
+
+  .hint-count {
+    font-size: clamp(11px, 1.0vw, 14px);
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+
+  .autocomplete-row {
+    margin-top: clamp(8px, 1vh, 12px);
+  }
+
+  .autocomplete-button {
+    width: 100%;
+    min-height: clamp(52px, 5vh, 66px);
+    border-radius: 12px;
+    font-size: clamp(14px, 1.3vw, 18px);
+    font-weight: 750;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .autocomplete-icon {
+    font-size: clamp(18px, 1.6vw, 24px);
+  }
+
+  .autocomplete-subtext {
+    font-size: clamp(11px, 1.0vw, 14px);
   }
 
   .game-sidebar > * {
     min-width: 0;
+  }
+
+  /* ---------------------------------
+     HOW TO PLAY EQUALIZATION
+     --------------------------------- */
+  .how-to-play {
+    margin-top: clamp(20px, 2.5vh, 32px);
+    padding: clamp(18px, 2vw, 26px);
+    gap: clamp(14px, 1.6vw, 22px);
+    border-radius: 16px;
+  }
+
+  .info-icon {
+    width: clamp(38px, 3.5vw, 48px);
+    height: clamp(38px, 3.5vw, 48px);
+    font-size: clamp(18px, 1.6vw, 22px);
+  }
+
+  .how-to-content h2 {
+    font-size: clamp(17px, 1.6vw, 22px);
+    margin-bottom: clamp(6px, 0.8vh, 10px);
+  }
+
+  .how-to-content p {
+    font-size: clamp(13px, 1.2vw, 16px);
+    line-height: 1.6;
+  }
+
+  .rules-button {
+    min-height: clamp(44px, 4.5vh, 52px);
+    padding: 0 clamp(16px, 1.8vw, 24px);
+    font-size: clamp(13px, 1.2vw, 16px);
+    border-radius: 12px;
+  }
+
+  /* ---------------------------------
+     FOOTER EQUALIZATION
+     --------------------------------- */
+  .game-footer {
+    margin-top: clamp(20px, 2.5vh, 32px);
+    padding-top: clamp(20px, 2.2vh, 28px);
+    gap: clamp(16px, 2vw, 28px);
+  }
+
+  .game-footer strong {
+    font-size: clamp(14px, 1.3vw, 17px);
+  }
+
+  .game-footer span {
+    font-size: clamp(12px, 1.1vw, 15px);
+  }
+
+  .wifi-icon {
+    width: clamp(42px, 4vw, 52px);
+    height: clamp(42px, 4vw, 52px);
+    font-size: clamp(20px, 1.8vw, 26px);
   }
 
 }
@@ -3441,12 +3747,7 @@ a {
   }
 
   .cell-value {
-    font-size:
-      clamp(
-        20px,
-        7vw,
-        29px
-      );
+    font-size: clamp(20px, 6.8cqi, 32px);
   }
 
   .cell-notes {
