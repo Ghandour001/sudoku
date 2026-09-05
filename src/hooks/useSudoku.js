@@ -12,6 +12,7 @@ const SCORE_PER_MOVE = {
 const MISTAKE_PENALTY = 20;
 const HINT_PENALTY = 30;
 const WIN_BONUS = 100;
+const AUTO_COMPLETE_THRESHOLD = 10;
 
 function createEmptyNotes() {
   return Array.from({ length: 9 }, () =>
@@ -438,6 +439,47 @@ function gameReducer(state, action) {
       };
     }
 
+    case "AUTO_COMPLETE": {
+      if (state.gameStatus !== "playing" || state.isPaused) {
+        return state;
+      }
+
+      let remaining = 0;
+      for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+          if (state.board[r][c] === 0 || state.board[r][c] !== state.solution[r][c]) {
+            remaining++;
+          }
+        }
+      }
+
+      if (remaining === 0 || remaining > AUTO_COMPLETE_THRESHOLD) {
+        return state;
+      }
+
+      const moveScore = getMoveScore(state.difficulty);
+      const addedScore = remaining * moveScore + WIN_BONUS;
+
+      const snapshot = {
+        board: cloneBoard(state.board),
+        notes: cloneNotes(state.notes),
+        score: state.score,
+      };
+
+      return {
+        ...state,
+        board: cloneBoard(state.solution),
+        notes: createEmptyNotes(),
+        score: state.score + addedScore,
+        gameStatus: "won",
+        selectedCell: null,
+        mistakeCell: null,
+        checkFeedback: null,
+        history: [...state.history, snapshot],
+        future: [],
+      };
+    }
+
     case "TOGGLE_PAUSE": {
       if (state.gameStatus !== "playing") return state;
       return {
@@ -536,6 +578,10 @@ function useSudoku(initialDifficulty = "medium", savedGame = null) {
     dispatch({ type: "CHECK_BOARD" });
   }, []);
 
+  const autoComplete = useCallback(() => {
+    dispatch({ type: "AUTO_COMPLETE" });
+  }, []);
+
   const togglePause = useCallback(() => {
     dispatch({ type: "TOGGLE_PAUSE" });
   }, []);
@@ -591,12 +637,31 @@ function useSudoku(initialDifficulty = "medium", savedGame = null) {
     };
   }, [state.selectedCell, state.board, state.notes, state.puzzle]);
 
+  const remainingCount = useMemo(() => {
+    let count = 0;
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        if (state.board[r][c] === 0 || state.board[r][c] !== state.solution[r][c]) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }, [state.board, state.solution]);
+
+  const canAutoComplete =
+    state.gameStatus === "playing" &&
+    remainingCount > 0 &&
+    remainingCount <= AUTO_COMPLETE_THRESHOLD;
+
   return {
     ...state,
     canUndo: state.history.length > 0,
     canRedo: state.future.length > 0,
     numberStats,
     selectedInfo,
+    remainingCount,
+    canAutoComplete,
 
     selectCell,
     moveSelection,
@@ -606,6 +671,7 @@ function useSudoku(initialDifficulty = "medium", savedGame = null) {
     redo,
     applyHint,
     checkBoard,
+    autoComplete,
     togglePause,
     toggleNotesMode,
     clearMistake,

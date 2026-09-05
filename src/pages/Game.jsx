@@ -66,6 +66,8 @@ function GameScreen({ difficulty, savedGame }) {
     numberStats,
     canUndo,
     canRedo,
+    remainingCount,
+    canAutoComplete,
     restartGame,
     selectCell,
     moveSelection,
@@ -75,6 +77,7 @@ function GameScreen({ difficulty, savedGame }) {
     redo,
     applyHint,
     checkBoard,
+    autoComplete,
     togglePause,
     toggleNotesMode,
     clearMistake,
@@ -92,6 +95,7 @@ function GameScreen({ difficulty, savedGame }) {
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [endgameBannerDismissed, setEndgameBannerDismissed] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(
     Boolean(document.fullscreenElement),
   );
@@ -236,6 +240,11 @@ function GameScreen({ difficulty, savedGame }) {
     applyHint();
   }, [isPaused, gameStatus, hints, soundEnabled, applyHint]);
 
+  const handleAutoComplete = useCallback(() => {
+    if (isPaused || gameStatus !== "playing" || !canAutoComplete) return;
+    autoComplete();
+  }, [isPaused, gameStatus, canAutoComplete, autoComplete]);
+
   /* Keyboard controls with Arrow keys navigation */
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -315,6 +324,13 @@ function GameScreen({ difficulty, savedGame }) {
         return;
       }
 
+      // Auto Complete shortcut (A)
+      if (event.key.toLowerCase() === "a" && canAutoComplete) {
+        event.preventDefault();
+        handleAutoComplete();
+        return;
+      }
+
       // Hint shortcut (H)
       if (event.key.toLowerCase() === "h") {
         event.preventDefault();
@@ -327,6 +343,7 @@ function GameScreen({ difficulty, savedGame }) {
   }, [
     isPaused,
     gameStatus,
+    canAutoComplete,
     moveSelection,
     handleEnterNumber,
     handleErase,
@@ -335,6 +352,7 @@ function GameScreen({ difficulty, savedGame }) {
     undo,
     redo,
     handleHint,
+    handleAutoComplete,
   ]);
 
   /* Settings update helper */
@@ -364,12 +382,14 @@ function GameScreen({ difficulty, savedGame }) {
       return;
     }
 
+    setEndgameBannerDismissed(false);
     restartGame();
     resetTimer();
     hasRecordedResult.current = false;
   };
 
   const handleNewGame = () => {
+    setEndgameBannerDismissed(false);
     clearCurrentGame();
     navigate("/new-game");
   };
@@ -512,6 +532,37 @@ function GameScreen({ difficulty, savedGame }) {
         </div>
       )}
 
+      {canAutoComplete && !endgameBannerDismissed && (
+        <div className="endgame-banner" role="status">
+          <span className="endgame-icon">⚡</span>
+          <div className="endgame-content">
+            <strong>Endgame Reached!</strong>
+            <p>
+              Only {remainingCount} {remainingCount === 1 ? "number" : "numbers"} left.
+              You can finish the board with Auto Complete, or continue solving manually.
+            </p>
+          </div>
+          <div className="endgame-actions">
+            <button
+              type="button"
+              className="endgame-action-button"
+              onClick={handleAutoComplete}
+              disabled={isPaused}
+            >
+              Auto Complete
+            </button>
+            <button
+              type="button"
+              className="banner-close"
+              onClick={() => setEndgameBannerDismissed(true)}
+              aria-label="Dismiss banner"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
       <section className="game-layout">
         <div className="board-section">
           <SudokuBoard
@@ -544,6 +595,9 @@ function GameScreen({ difficulty, savedGame }) {
             hints={hints}
             onCheck={checkBoard}
             isPaused={isPaused}
+            canAutoComplete={canAutoComplete}
+            remainingCount={remainingCount}
+            onAutoComplete={handleAutoComplete}
           />
         </aside>
       </section>
@@ -729,9 +783,14 @@ function GameScreen({ difficulty, savedGame }) {
               </div>
 
               <div>
-                <strong>6. Keyboard Controls</strong>
+                <strong>6. Optional Auto Complete</strong>
+                <p>When 10 or fewer numbers remain, an optional Auto Complete button appears so you can quickly finish the puzzle if desired.</p>
+              </div>
+
+              <div>
+                <strong>7. Keyboard Controls</strong>
                 <p>
-                  Arrows / WASD: Move · 1–9: Input · Delete: Erase · N: Notes · H: Hint · P: Pause · Ctrl+Z: Undo · Ctrl+Y: Redo
+                  Arrows / WASD: Move · 1–9: Input · Delete: Erase · N: Notes · H: Hint · A: Auto Complete · P: Pause · Ctrl+Z: Undo · Ctrl+Y: Redo
                 </p>
               </div>
             </div>

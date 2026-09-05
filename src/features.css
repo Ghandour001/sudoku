@@ -811,4 +811,227 @@ html[data-theme="light"] .check-feedback-banner.warning {
 
 .check-feedback-banner .banner-close:hover {
   opacity: 1;
+}
+
+/* ========================================
+   ENDGAME AUTO-COMPLETE & BANNER
+======================================== */
+
+.autocomplete-row {
+  margin-top: 10px;
+  animation: autocompleteSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes autocompleteSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.autocomplete-button {
+  width: 100%;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(167, 139, 250, 0.5);
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #d97706 100%);
+  background-size: 200% 200%;
+  color: #ffffff !important;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  animation: gradientShift 4s ease infinite alternate;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.autocomplete-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.5);
+  border-color: rgba(216, 180, 254, 0.9);
+}
+
+.autocomplete-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.autocomplete-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.autocomplete-icon {
+  font-size: 22px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.autocomplete-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+  color: #ffffff !important;
+  font-size: 15px;
+}
+
+.autocomplete-subtext {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Light Mode Overrides for Autocomplete Button */
+html[data-theme="light"] .autocomplete-button {
+  background: linear-gradient(135deg, #6d28d9 0%, #4338ca 50%, #b45309 100%);
+  border-color: rgba(109, 40, 217, 0.4);
+  box-shadow: 0 4px 16px rgba(109, 40, 217, 0.28);
+}
+
+html[data-theme="light"] .autocomplete-button:hover:not(:disabled) {
+  box-shadow: 0 8px 22px rgba(109, 40, 217, 0.4);
+  border-color: rgba(109, 40, 217, 0.8);
+}
+
+/* Endgame Notification Banner */
+.endgame-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  margin: 0 auto 16px;
+  max-width: 900px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(217, 119, 6, 0.14));
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  color: #f1f5f9;
+  animation: bannerFadeIn 0.3s ease-out;
+}
+
+.endgame-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.endgame-content {
+  flex: 1;
+}
+
+.endgame-content strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 750;
+  color: #fbbf24;
+}
+
+.endgame-content p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  opacity: 0.92;
+  line-height: 1.35;
+}
+
+.endgame-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.endgame-action-button {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #ffffff;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 3px 12px rgba(124, 58, 237, 0.35);
+}
+
+.endgame-action-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(124, 58, 237, 0.5);
+}
+
+.endgame-action-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.endgame-banner .banner-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+  padding: 0 4px;
+  line-height: 1;
+  transition: opacity 0.15s ease;
+}
+
+.endgame-banner .banner-close:hover {
+  opacity: 1;
+}
+
+/* Light Mode Overrides for Endgame Banner */
+html[data-theme="light"] .endgame-banner {
+  background: linear-gradient(135deg, #f5f3ff, #fef3c7);
+  border-color: #c4b5fd;
+  color: #1e1b4b;
+}
+
+html[data-theme="light"] .endgame-content strong {
+  color: #b45309;
+}
+
+html[data-theme="light"] .endgame-content p {
+  color: #374151;
+}
+
+html[data-theme="light"] .endgame-action-button {
+  background: linear-gradient(135deg, #6d28d9, #4338ca);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .autocomplete-button,
+  .autocomplete-row,
+  .endgame-banner {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .endgame-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .endgame-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

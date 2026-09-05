@@ -9,6 +9,9 @@ function GameToolbar({
   hints,
   onCheck,
   isPaused,
+  canAutoComplete,
+  remainingCount,
+  onAutoComplete,
 }) {
   return (
     <div className="game-toolbar">
@@ -123,6 +126,27 @@ function GameToolbar({
           <span>Check</span>
         </button>
       </div>
+
+      {canAutoComplete && (
+        <div className="autocomplete-row">
+          <button
+            type="button"
+            className="tool-button autocomplete-button"
+            onClick={onAutoComplete}
+            disabled={isPaused}
+            aria-label={`Auto-complete remaining ${remainingCount} numbers`}
+            title="Auto-complete remaining numbers"
+          >
+            <span className="autocomplete-icon">⚡</span>
+            <span className="autocomplete-text">
+              Auto Complete
+              <span className="autocomplete-subtext">
+                {remainingCount} {remainingCount === 1 ? "number" : "numbers"} left
+              </span>
+            </span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

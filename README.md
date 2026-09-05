@@ -70,6 +70,7 @@ Everything runs **100% client-side in the browser**—with sub-millisecond solvi
 - **Unlimited Undo & Redo**: Full `Ctrl+Z` and `Ctrl+Y` history traversal.
 - **Targeted Hint Assistant**: Intelligently inspects the currently selected cell and places the correct number, deducting score accordingly.
 - **Check Board Assistant**: Instant scan of user entries with non-intrusive feedback confirming valid progress or identifying mistakes.
+- **Endgame Auto-Complete Assistant**: When 10 or fewer empty cells remain, a high-visibility, radiant **Auto Complete** button unlocks. Players maintain total freedom to finish the puzzle in a single tap or continue solving manually.
 - **Pause & Anti-Peek Blind**: Pausing conceals the grid numbers to preserve fair timing when taking breaks.
 
 ### 📊 Analytics, Customization & Privacy
@@ -108,6 +109,7 @@ Thanks to Bitmask optimizations and diagonal box seeding, puzzle generation and 
    - `Erase`: Clear an entered number or note (`Delete` / `Backspace`).
    - `Hint`: Reveal the correct number for the active cell (up to 3 per match, press `H`).
    - `Check`: Validate your current inputs against the solution.
+   - `Auto Complete`: When 10 or fewer numbers remain, an optional Auto Complete button unlocks (or press `A`), giving you the choice to finish the board instantly or complete it manually.
 5. **Win the Game**: Fill all 81 cells correctly without exceeding **3 mistakes**!
 
 ---
@@ -165,6 +167,7 @@ Points encourage fast, accurate, and deliberate solving:
 | **Mistake Penalty** | `-20` pts | Deducted whenever an incorrect number is entered |
 | **Hint Penalty** | `-30` pts | Deducted per hint used (max 3 hints) |
 | **Puzzle Completion Bonus** | `+100` pts | Awarded upon successfully completing the board |
+| **Endgame Auto-Complete** | Full move pts + `+100` | Awards remaining cell points (`remaining × moveScore`) plus win bonus |
 
 > [!NOTE]
 > Scores are floored at `0` points and cannot become negative.
@@ -182,6 +185,7 @@ Speed up your gameplay on desktop with native keyboard shortcuts:
 | <kbd>Backspace</kbd> / <kbd>Delete</kbd> | Erase number or notes in selected cell |
 | <kbd>N</kbd> | Toggle **Notes Mode** (Pencil Marks) ON / OFF |
 | <kbd>H</kbd> | Request a **Hint** for the selected cell |
+| <kbd>A</kbd> | **Auto Complete** remaining numbers (when ≤ 10 cells remain) |
 | <kbd>P</kbd> / <kbd>Space</kbd> | **Pause** or resume the game |
 | <kbd>Ctrl</kbd> + <kbd>Z</kbd> / <kbd>Cmd</kbd> + <kbd>Z</kbd> | **Undo** last action |
 | <kbd>Ctrl</kbd> + <kbd>Y</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> | **Redo** previously undone action |
@@ -215,12 +219,12 @@ sudoku/
 │   ├── assets/                 # Graphics and branding media
 │   ├── components/             # Modular React UI components
 │   │   ├── GameModal.jsx       # Win, loss, pause, and alert modals
-│   │   ├── GameToolbar.jsx     # Controls (Undo, Redo, Erase, Notes, Hint, Check)
+│   │   ├── GameToolbar.jsx     # Controls (Undo, Redo, Erase, Notes, Hint, Check, Auto Complete)
 │   │   ├── NumberPad.jsx       # 1-9 virtual input keypad with usage counters
 │   │   ├── SudokuBoard.jsx     # 9x9 interactive grid container
 │   │   └── SudokuCell.jsx      # Individual interactive cell with fixed 3x3 note matrix
 │   ├── hooks/                  # Custom game logic hooks
-│   │   ├── useSudoku.js        # Centralized useReducer state machine & game actions
+│   │   ├── useSudoku.js        # Centralized useReducer state machine, endgame auto-complete & actions
 │   │   └── useTimer.js         # Accurate tick & pause-aware stopwatch hook
 │   ├── logic/                  # Algorithmic engine (independent of React)
 │   │   ├── difficulty.js       # Logical technique detection & puzzle rater
