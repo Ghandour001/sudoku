@@ -1,206 +1,105 @@
-import { countSolutions } from "./solver.js";
+import { countSolutions, solveSudoku } from "./solver.js";
 import { ratePuzzle } from "./difficulty.js";
 
-/*
-  Create an empty 9x9 board.
-*/
 function createEmptyBoard() {
   return Array.from({ length: 9 }, () => Array(9).fill(0));
 }
 
-/*
-  Shuffle an array using Fisher-Yates.
-*/
 function shuffle(array) {
   const result = [...array];
-
   for (let i = result.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-
     [result[i], result[j]] = [result[j], result[i]];
   }
-
   return result;
 }
 
 /*
-  Check whether a number can be placed.
+  Fill 3x3 block with shuffled numbers 1-9
 */
-function isValidMoveLocal(board, row, col, number) {
-  for (let c = 0; c < 9; c++) {
-    if (c !== col && board[row][c] === number) {
-      return false;
-    }
-  }
-
-  for (let r = 0; r < 9; r++) {
-    if (r !== row && board[r][col] === number) {
-      return false;
-    }
-  }
-
-  const boxRow = Math.floor(row / 3) * 3;
-  const boxCol = Math.floor(col / 3) * 3;
-
-  for (let r = boxRow; r < boxRow + 3; r++) {
-    for (let c = boxCol; c < boxCol + 3; c++) {
-      if (
-        (r !== row || c !== col) &&
-        board[r][c] === number
-      ) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
-/*
-  Randomly fill the board with a complete valid solution.
-*/
-function fillBoard(board) {
-  let emptyRow = -1;
-  let emptyCol = -1;
-
-  for (let row = 0; row < 9; row++) {
-    for (let col = 0; col < 9; col++) {
-      if (board[row][col] === 0) {
-        emptyRow = row;
-        emptyCol = col;
-        break;
-      }
-    }
-
-    if (emptyRow !== -1) {
-      break;
-    }
-  }
-
-  if (emptyRow === -1) {
-    return true;
-  }
-
+function fillBox(board, startRow, startCol) {
   const numbers = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-
-  for (const number of numbers) {
-    if (
-      isValidMoveLocal(
-        board,
-        emptyRow,
-        emptyCol,
-        number,
-      )
-    ) {
-      board[emptyRow][emptyCol] = number;
-
-      if (fillBoard(board)) {
-        return true;
-      }
-
-      board[emptyRow][emptyCol] = 0;
+  let idx = 0;
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      board[startRow + r][startCol + c] = numbers[idx++];
     }
   }
-
-  return false;
 }
 
 /*
-  Generate a completely solved Sudoku.
+  Generate a completely solved Sudoku board fast by filling
+  independent diagonal 3x3 boxes, then solving the rest.
 */
 export function generateSolvedBoard() {
   const board = createEmptyBoard();
 
-  fillBoard(board);
+  // Diagonal boxes are mutually independent
+  fillBox(board, 0, 0);
+  fillBox(board, 3, 3);
+  fillBox(board, 6, 6);
 
+  solveSudoku(board);
   return board;
 }
 
-/*
-  Difficulty targets.
-
-  These are not simply clue counts.
-  The generated puzzle must also pass the
-  corresponding difficulty score range.
-*/
 const difficultySettings = {
   easy: {
-    minClues: 40,
-    maxClues: 46,
+    minClues: 38,
+    maxClues: 44,
     minScore: 0,
-    maxScore: 44,
+    maxScore: 49,
   },
-
   medium: {
-    minClues: 34,
-    maxClues: 39,
-    minScore: 45,
-    maxScore: 79,
+    minClues: 30,
+    maxClues: 36,
+    minScore: 40,
+    maxScore: 84,
   },
-
   hard: {
-    minClues: 28,
-    maxClues: 33,
-    minScore: 80,
-    maxScore: 124,
+    minClues: 26,
+    maxClues: 29,
+    minScore: 75,
+    maxScore: 130,
   },
-
   expert: {
-    minClues: 24,
-    maxClues: 27,
-    minScore: 125,
+    minClues: 22,
+    maxClues: 26,
+    minScore: 110,
     maxScore: Infinity,
   },
-};;
+};
 
-/*
-  Count clues.
-*/
 function countClues(board) {
   let clues = 0;
-
-  for (const row of board) {
-    for (const value of row) {
-      if (value !== 0) {
-        clues++;
-      }
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      if (board[r][c] !== 0) clues++;
     }
   }
-
   return clues;
 }
 
 /*
   Remove numbers while preserving uniqueness.
 */
-function carvePuzzle(solution, settings) {
+function carvePuzzle(solution, targetClues) {
   const puzzle = solution.map((row) => [...row]);
-
-  const cells = shuffle(
-    Array.from({ length: 81 }, (_, index) => index),
-  );
+  const cells = shuffle(Array.from({ length: 81 }, (_, i) => i));
 
   let clues = 81;
 
   for (const cellIndex of cells) {
-    if (clues <= settings.minClues) {
-      break;
-    }
+    if (clues <= targetClues) break;
 
     const row = Math.floor(cellIndex / 9);
     const col = cellIndex % 9;
-
     const backup = puzzle[row][col];
 
     puzzle[row][col] = 0;
 
-    const testBoard = puzzle.map((currentRow) => [
-      ...currentRow,
-    ]);
-
-    const solutions = countSolutions(testBoard, 2);
-
-    if (solutions === 1) {
+    const testBoard = puzzle.map((r) => [...r]);
+    if (countSolutions(testBoard, 2) === 1) {
       clues--;
     } else {
       puzzle[row][col] = backup;
@@ -211,79 +110,44 @@ function carvePuzzle(solution, settings) {
 }
 
 /*
-  Generate a puzzle of the requested difficulty.
-
-  We may generate several candidates until the puzzle
-  actually falls inside the requested difficulty range.
+  Generate a puzzle matching the requested difficulty.
 */
 export function generatePuzzle(difficulty = "medium") {
-  const settings =
-    difficultySettings[difficulty] ??
-    difficultySettings.medium;
+  const settings = difficultySettings[difficulty] ?? difficultySettings.medium;
+  const targetClues = Math.floor((settings.minClues + settings.maxClues) / 2);
+  const maxAttempts = 5;
 
-  const maxAttempts = 20;
+  let bestResult = null;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const solution = generateSolvedBoard();
-
-    const puzzle = carvePuzzle(solution, settings);
-
+    const puzzle = carvePuzzle(solution, targetClues);
     const clues = countClues(puzzle);
-
-    /*
-      Don't even rate a puzzle if its clue count
-      is outside the intended range.
-    */
-    if (
-      clues < settings.minClues ||
-      clues > settings.maxClues
-    ) {
-      continue;
-    }
-
     const rating = ratePuzzle(puzzle);
 
+    const result = {
+      puzzle,
+      solution,
+      difficulty,
+      score: rating.score,
+      clues,
+      techniques: rating.techniques,
+    };
+
     if (
+      clues >= settings.minClues &&
+      clues <= settings.maxClues &&
       rating.score >= settings.minScore &&
       rating.score <= settings.maxScore
     ) {
-      return {
-        puzzle,
-        solution,
-        difficulty: rating.difficulty,
-        score: rating.score,
-        clues,
-        techniques: rating.techniques,
-      };
+      return result;
+    }
+
+    if (!bestResult || Math.abs(clues - targetClues) < Math.abs(bestResult.clues - targetClues)) {
+      bestResult = result;
     }
   }
 
-  /*
-  Fallback.
-
-  If we could not find a puzzle that perfectly matches
-  the requested difficulty within the allowed attempts,
-  still return a valid puzzle.
-
-  IMPORTANT:
-  The player's requested difficulty must remain the
-  selected difficulty. We must NOT replace Expert with
-  Medium/Hard just because the fallback rating differs.
-*/
-
-const solution = generateSolvedBoard();
-const puzzle = carvePuzzle(solution, settings);
-const rating = ratePuzzle(puzzle);
-
-return {
-  puzzle,
-  solution,
-
-  // Keep the difficulty the player actually selected.
-  difficulty,
-
-  score: rating.score,
-  clues: countClues(puzzle),
-  techniques: rating.techniques,
-};
+  // Fallback to best found
+  return bestResult;
 }
