@@ -1,16 +1,60 @@
-# React + Vite
+# Sudoku
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A browser-based Sudoku game built with React and Vite. Choose a difficulty, solve puzzles at your own pace, and track your performance over time.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Four difficulty levels: Easy, Medium, Hard, and Expert
+- Puzzle generation, solution validation, and difficulty scoring
+- Notes mode, hints, undo/redo, pause, restart, and mistake tracking
+- Timer with saved-game restoration
+- Light and dark themes with configurable game settings
+- Statistics for games played, wins, win rate, scores, times, and mistakes
+- Progress and statistics stored locally in the browser
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Requirements
 
-## Expanding the ESLint configuration
+- Node.js 18 or newer
+- npm
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Install and run
+
+```bash
+npm install
+npm run dev
+```
+
+Open the local URL printed by Vite in your browser.
+
+## Available Commands
+
+| Command           | Description                                       |
+| ----------------- | ------------------------------------------------- |
+| `npm run dev`     | Start the Vite development server with hot reload |
+| `npm run build`   | Create a production build in `dist/`              |
+| `npm run preview` | Preview the production build locally              |
+| `npm run lint`    | Run ESLint across the project                     |
+
+## Project Structure
+
+```text
+src/
+├── components/   Reusable game interface components
+├── hooks/        Sudoku and timer state management
+├── logic/        Puzzle generation, solving, validation, and difficulty logic
+├── pages/        Home, new game, game, and statistics screens
+└── utils/        Browser storage, settings, and statistics helpers
+```
+
+## Data Storage
+
+The app does not require a backend. The current game, preferences, and statistics are stored in the browser using `localStorage`. Clearing site data will remove saved progress and statistics.
+
+## Tech Stack
+
+- React 19
+- React Router
+- Vite
+- ESLint
