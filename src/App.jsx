@@ -1,6 +1,6 @@
-import {
-  useEffect,
-} from "react";
+import { useEffect } from "react";
+
+import { Analytics } from "@vercel/analytics/react";
 
 import {
   BrowserRouter,
@@ -51,6 +51,7 @@ function App() {
           }
         />
       </Routes>
+      <Analytics />
     </BrowserRouter>
   );
 }
