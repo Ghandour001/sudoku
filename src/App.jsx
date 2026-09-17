@@ -8,6 +8,8 @@ import {
   Route,
 } from "react-router-dom";
 
+import { Analytics } from "@vercel/analytics/react";
+
 import Home from "./pages/Home.jsx";
 import NewGame from "./pages/NewGame.jsx";
 import Game from "./pages/Game.jsx";
@@ -51,6 +53,7 @@ function App() {
           }
         />
       </Routes>
+      <Analytics />
     </BrowserRouter>
   );
 }
